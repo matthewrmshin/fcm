@@ -465,6 +465,15 @@ sub _sources_locate {
 # Locates the actual source files in $path.
 sub _sources_locate_by_find {
     my ($attrib_ref, $m_ctx, $ctx, $key, $path) = @_;
+    my $path_tar_gz = $path . '.tar.gz';
+    if (-f $path_tar_gz) {
+        my %value_of = %{$UTIL->shell_simple(
+            [qw{tar -x -z}, '-f', $path_tar_gz],
+        )};
+        if ($value_of{'rc'} == 0) {
+            unlink($path_tar_gz);
+        }
+    }
     if (!-e $path) {
         return $E->throw($E->BUILD_SOURCE, $path, $!);
     }
