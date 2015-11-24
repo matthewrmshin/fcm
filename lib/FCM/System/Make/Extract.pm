@@ -873,7 +873,7 @@ sub _project_tree_caches_update {
     my $e = $@;
     $runner->destroy();
     if ($e) {
-        _finally($attrib_ref, $m_ctx, $ctx);
+        _end_of_step($attrib_ref, $m_ctx, $ctx);
         die($e);
     }
     $UTIL->event(
@@ -1043,13 +1043,13 @@ sub _targets_update {
         }
     };
     if (my $e = $@) {
-        _finally($attrib_ref, $m_ctx, $ctx);
+        _end_of_step($attrib_ref, $m_ctx, $ctx);
         die($e);
     }
     $UTIL->event(
         FCM::Context::Event->MAKE_EXTRACT_TARGET_SUMMARY, \%basket_of,
     );
-    _finally($attrib_ref, $m_ctx, $ctx);
+    _end_of_step($attrib_ref, $m_ctx, $ctx);
 }
 
 # Updates a deleted target.
@@ -1202,7 +1202,7 @@ sub _target_update_source_merge {
 
 # Perform final actions.
 # Archive cache directory if necessary.
-sub _finally {
+sub _end_of_step {
     my ($attrib_ref, $m_ctx, $ctx) = @_;
     if (!$m_ctx->get_option_of('archive')) {
         return;

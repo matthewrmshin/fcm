@@ -742,7 +742,7 @@ sub _targets_update {
     # Back to original working directory
     chdir($old_cwd) || die(sprintf("%s: %s\n", $old_cwd, $!));
     if ($e) {
-        _finally($attrib_ref, $m_ctx, $ctx);
+        _end_of_step($attrib_ref, $m_ctx, $ctx);
         die($e);
     }
     # Finally
@@ -774,10 +774,10 @@ sub _targets_update {
             FCM::Context::Event->MAKE_BUILD_TARGETS_FAIL,
             \@failed_targets
         );
-        _finally($attrib_ref, $m_ctx, $ctx);
+        _end_of_step($attrib_ref, $m_ctx, $ctx);
         die("\n");
     }
-    _finally($attrib_ref, $m_ctx, $ctx);
+    _end_of_step($attrib_ref, $m_ctx, $ctx);
 }
 
 # Updates a target.
@@ -1627,7 +1627,7 @@ sub _prev_hash_item_getter {
 
 # Perform final actions.
 # Archive intermediate target directories if necessary.
-sub _finally {
+sub _end_of_step {
     my ($attrib_ref, $m_ctx, $ctx) = @_;
     if (!$m_ctx->get_option_of('archive')) {
         return;

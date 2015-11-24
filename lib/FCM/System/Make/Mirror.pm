@@ -137,16 +137,19 @@ sub _main {
     my @sources;
     my @bad_step_list;
     for my $step (@{$m_ctx->get_steps()}) {
-        my $ctx = $m_ctx->get_ctx_of($step);
-        if (    $ctx->get_status() eq $m_ctx->ST_OK
-            &&  $ctx->can('get_dest')
-            &&  -e $ctx->get_dest()
+        my $step_ctx = $m_ctx->get_ctx_of($step);
+        if (    $step_ctx->get_status() eq $m_ctx->ST_OK
+            &&  $step_ctx->can('get_dest')
+            &&  -e $step_ctx->get_dest()
         ) {
-            if ($do_config_file && !$ctx->can('MIRROR')) {
+            if ($do_config_file && !$step_ctx->can('MIRROR')) {
                 push(@bad_step_list, $step);
             }
-            else {
-                push(@sources, $ctx->get_dest());
+            elsif (-f $step_ctx->get_dest() . '.tar.gz') {
+                push(@sources, $step_ctx->get_dest() . '.tar.gz');
+            }
+            elsif (-e $step_ctx->get_dest()) {
+                push(@sources, $step_ctx->get_dest());
             }
         }
     }
